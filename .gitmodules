@@ -1,0 +1,12 @@
+[submodule "smart-car-ins-open-source/eagleye"]
+	path = smart-car-ins-open-source/eagleye
+	url = https://github.com/MapIV/eagleye.git
+[submodule "smart-car-ins-open-source/INSLIB"]
+	path = smart-car-ins-open-source/INSLIB
+	url = https://github.com/jnz/INSLIB.git
+[submodule "smart-car-ins-open-source/kalman_filter_localization_ros2"]
+	path = smart-car-ins-open-source/kalman_filter_localization_ros2
+	url = https://github.com/rsasaki0109/kalman_filter_localization_ros2.git
+[submodule "smart-car-ins-open-source/Vehicle-State-Estimation"]
+	path = smart-car-ins-open-source/Vehicle-State-Estimation
+	url = https://github.com/jasleon/Vehicle-State-Estimation.git

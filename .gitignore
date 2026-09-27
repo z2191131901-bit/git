@@ -1,0 +1,43 @@
+# Secrets and local configuration
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+id_rsa*
+id_ed25519*
+credentials*.json
+secrets*.json
+# Local agent/editor files
+.agents/
+.codex/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+# Dependencies and caches
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.cache/
+# C/C++ and ROS build outputs
+build/
+dist/
+install/
+log/
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.lib
+*.pdb
+*.tmp
+*.log
+sensor-algorithms-sample/gyro_quaternion
