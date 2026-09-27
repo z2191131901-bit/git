@@ -32,12 +32,48 @@ Linux/macOS 可使用每篇文档中的 gcc 命令分别编译运行；本批尚
 
 ## 后续计划（尚未实现）
 
-下一批优先：四元数基础、增量四元数、欧拉角转换、Mahony、一维卡尔曼。
+四元数基础、增量更新、欧拉角、Mahony 和一维卡尔曼等已在第二批完成，见下方目录。
 
-进一步主题：加权平均、限幅、Butterworth、陷波、FIR、向量旋转、重力去除、Madgwick、倾斜补偿航向、六面校准、磁力计校准、温度补偿、静止检测、α-β、位置速度卡尔曼、高度融合、姿态 EKF、RMS 和 FFT。
+尚未纳入本次已确认清单的扩展主题：加权平均、限幅、FIR、完整磁力计椭球拟合、温度补偿、α-β、位置速度卡尔曼、高度融合、姿态 EKF、RMS 和 FFT。
 
 ## 来源与约定
 
-本批六个示例按教学目标独立编写，参考链接附在对应讲解中，没有复制第三方源码。坐标系、单位、初始化规则和输入限制以每篇说明为准，不要跨算法混用角度单位或坐标约定。
+首批六个新增示例按教学目标独立编写，参考链接附在对应讲解中，没有复制第三方源码。坐标系、单位、初始化规则和输入限制以每篇说明为准，不要跨算法混用角度单位或坐标约定。
 
 本批 GCC 编译及模拟检查通过；原始样稿讲解里的“尚未编译”是此前编写时的历史记录，现已完成编译验证。原有文件保持不变。
+
+## 第二批：姿态、校准、信号处理与轮式运动
+
+上一轮确认的全部主题已覆盖，并按独立学习单元拆成15篇；加上首批7个示例，现在共22个独立可运行示例。
+
+| 编号 | 主题 | 代码 | 讲解 |
+| --- | --- | --- | --- |
+| 08 | 四元数基础 | [代码](08_quaternion_basics/quaternion_basics.c) | [讲解](08_quaternion_basics/讲解.md) |
+| 09 | 增量四元数更新 | [代码](09_quaternion_increment/quaternion_increment.c) | [讲解](09_quaternion_increment/讲解.md) |
+| 10 | 四元数转欧拉角 | [代码](10_euler_angles/euler_angles.c) | [讲解](10_euler_angles/讲解.md) |
+| 11 | Mahony 姿态融合 | [代码](11_mahony/mahony.c) | [讲解](11_mahony/讲解.md) |
+| 12 | Madgwick 六轴姿态融合 | [代码](12_madgwick/madgwick.c) | [讲解](12_madgwick/讲解.md) |
+| 13 | 一维卡尔曼滤波 | [代码](13_kalman_scalar/kalman_scalar.c) | [讲解](13_kalman_scalar/讲解.md) |
+| 14 | 滑动窗口静止检测 | [代码](14_stationary/stationary.c) | [讲解](14_stationary/讲解.md) |
+| 15 | 加速度计六面校准 | [代码](15_accel_calibration/accel_calibration.c) | [讲解](15_accel_calibration/讲解.md) |
+| 16 | 磁力计偏移与独立比例校准 | [代码](16_mag_calibration/mag_calibration.c) | [讲解](16_mag_calibration/讲解.md) |
+| 17 | 磁力计倾斜补偿航向 | [代码](17_magnetic_heading/magnetic_heading.c) | [讲解](17_magnetic_heading/讲解.md) |
+| 18 | 坐标变换与重力去除 | [代码](18_gravity_removal/gravity_removal.c) | [讲解](18_gravity_removal/讲解.md) |
+| 19 | 二阶 Butterworth 低通 | [代码](19_butterworth/butterworth.c) | [讲解](19_butterworth/讲解.md) |
+| 20 | 二阶陷波滤波 | [代码](20_notch/notch.c) | [讲解](20_notch/讲解.md) |
+| 21 | 编码器计数与周期测速 | [代码](21_encoder_speed/encoder_speed.c) | [讲解](21_encoder_speed/讲解.md) |
+| 22 | 差速小车里程计 | [代码](22_differential_odometry/differential_odometry.c) | [讲解](22_differential_odometry/讲解.md) |
+
+公共公式集中在 [math3d.h](common/math3d.h) 和 [biquad.h](common/biquad.h)，配有 [公共代码讲解](common/讲解.md)，请保留目录结构。
+
+推荐两条阅读路径：
+
+- 姿态路线：四元数基础 → 增量更新 → 欧拉角 → Mahony / Madgwick → 校准与航向 → 重力去除。
+- 小车路线：基础滤波 → 编码器测速 → 差速里程计 → 一维卡尔曼与静止检测。
+
+实现范围明确如下：
+
+- Mahony 包含六轴方向反馈及可选已知世界磁场参考；Madgwick 为经典六轴版本，不是九轴 MARG。
+- 磁力计采用 min/max 硬铁偏移与轴对齐独立比例校准，不是完整非对角椭球拟合。
+- 六面校准为独立轴比例和零偏模型；编码器示例不包含硬件驱动和计数器回绕处理。
+- 22个示例均有确定性结果检查，验证记录见 [验证记录](验证记录.md)。未进行实物传感器测试。
