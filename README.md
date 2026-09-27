@@ -1,3 +1,23 @@
-# github
+# 传感器、惯导与控制算法学习
 
-Initial repository.
+[进入算法目录](传感器与控制算法/README.md)：37个 C 语言示例，配有中文注释、独立讲解和模拟验证。
+
+[惯导与传感器搭配](传感器与控制算法/惯导与传感器搭配.md)：编码器、IMU、磁力计以及外部定位的搭配说明。
+
+[智能车惯导开源项目调研](smart-car-ins-open-source/README_中文分析.md)：第三方参考项目和中文分析。
+
+## 文件命名
+
+自编算法目录、源文件、公共头文件及验证脚本使用中文名称；PID、LQR、MPC 等常用缩写保留。
+README.md 和 Git 配置沿用工具约定名称。第三方子模块保留原项目名称和源码结构。
+
+## 在 Windows 编译运行
+
+在仓库根目录执行：
+
+~~~powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\传感器与控制算法\验证全部示例.ps1
+~~~
+
+旧版 MinGW 对 UTF-8 中文头文件路径支持不完整，脚本会在系统临时目录生成 ASCII 名称的编译副本，并自动改写副本中的本地 include。
+仓库中的中文文件、注释和算法逻辑保持原样；生成文件不提交 Git。

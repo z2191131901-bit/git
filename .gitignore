@@ -40,4 +40,4 @@ log/
 *.pdb
 *.tmp
 *.log
-sensor-algorithms-sample/gyro_quaternion
+传感器与控制算法/gyro_quaternion
