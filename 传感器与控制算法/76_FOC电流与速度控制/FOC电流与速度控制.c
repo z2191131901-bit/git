@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "../公共代码/空间矢量PWM.h"
 #include "../公共代码/PID核心.h"
+#include "../公共代码/FOC输入与保护.h"
 
 /* 表贴式PMSM参数：Ld=Lq，电流使用幅值不变变换后的峰值约定。 */
 static const double RESISTANCE = 0.4;  /* 相电阻[ohm]。 */
@@ -30,6 +31,8 @@ typedef struct {
 
 typedef struct {
     double integral_d, integral_q; /* 已乘Ki的电流积分贡献[V]。 */
+    double q_voltage_deficit; /* 原始vq减实际vq[V]，供外环下一拍使用。 */
+    int voltage_limited; /* 上一拍PWM是否限幅。 */
 } CurrentLoop;
 
 /* 电压与转矩作用于真实对象；锁轴模式只积分电流，外部夹具承担转矩。 */
@@ -140,7 +143,10 @@ static int foc_step(CurrentLoop *state, MotorAbc measured, double theta,
         !svpwm(voltage_request.alpha, voltage_request.beta, bus, &pwm))
         return 0;
 
-    MotorAb0 realized = actual_voltage(pwm, bus);
+    MotorAb0 realized;
+    MotorAbc pole = {(pwm.duty_a-0.5)*bus, (pwm.duty_b-0.5)*bus,
+                     (pwm.duty_c-0.5)*bus};
+    if (!motor_clarke(pole, &realized)) return 0;
     if (!motor_park(realized, theta, &applied))
         return 0;
     /*
@@ -148,9 +154,12 @@ static int foc_step(CurrentLoop *state, MotorAbc measured, double theta,
      * 用实际电压减原始请求反算，才能包含前馈占用的母线余量。
      * 积分在本拍输出计算之后更新，供下一拍使用。
      */
+    next.q_voltage_deficit = raw.q - applied.q;
+    next.voltage_limited = pwm.limited;
     next.integral_d = state->integral_d + DT * (ki * ed + kaw * (applied.d - raw.d));
     next.integral_q = state->integral_q + DT * (ki * eq + kaw * (applied.q - raw.q));
-    if (!isfinite(next.integral_d) || !isfinite(next.integral_q))
+    if (!isfinite(next.integral_d) || !isfinite(next.integral_q) ||
+        !isfinite(next.q_voltage_deficit))
         return 0;
     *state = next;
     *output = pwm;
@@ -285,8 +294,15 @@ static SpeedResult speed_test(int substeps)
     return result;
 }
 
+#include "运行管理验证片段.h"
+
 int main(void)
 {
+    check_input_and_guard();
+    double baseline_iae = check_outer_saturation(0);
+    double coordinated_iae = check_outer_saturation(1);
+    /* 冻结积分并非每种恢复场景都改善IAE，保留对比而不预设优劣。 */
+    assert(isfinite(baseline_iae) && isfinite(coordinated_iae));
     check_model_and_current();
     Recovery without = saturation_test(0);
     Recovery with = saturation_test(1);
